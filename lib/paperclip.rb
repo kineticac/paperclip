@@ -39,7 +39,7 @@ require 'paperclip/style'
 require 'paperclip/attachment'
 require 'paperclip/attachment_options'
 require 'paperclip/storage'
-require 'paperclip/callback_compatibility'
+require 'paperclip/callback'
 require 'paperclip/missing_attachment_styles'
 require 'paperclip/railtie'
 require 'logger'
@@ -216,18 +216,6 @@ module Paperclip
   class InfiniteInterpolationError < PaperclipError #:nodoc:
   end
 
-  module Glue
-    def self.included base #:nodoc:
-      base.extend ClassMethods
-      base.class_attribute :attachment_definitions if base.respond_to?(:class_attribute)
-      if base.respond_to?(:set_callback)
-        base.send :include, Paperclip::CallbackCompatability::Rails3
-      else
-        base.send :include, Paperclip::CallbackCompatability::Rails21
-      end
-    end
-  end
-
   module ClassMethods
     # +has_attached_file+ gives the class it is called on an attribute that maps to a file. This
     # is typically a file stored somewhere on the filesystem and has been uploaded by a user.
@@ -312,17 +300,9 @@ module Paperclip
       include InstanceMethods
 
       if attachment_definitions.nil?
-        if respond_to?(:class_attribute)
-          self.attachment_definitions = {}
-        else
-          write_inheritable_attribute(:attachment_definitions, {})
-        end
+        self.attachment_definitions = {}
       else
-        if respond_to?(:class_attribute)
-          self.attachment_definitions = self.attachment_definitions.dup
-        else
-          write_inheritable_attribute(:attachment_definitions, self.attachment_definitions.dup)
-        end
+        self.attachment_definitions = self.attachment_definitions.dup
       end
 
       attachment_definitions[name] = Paperclip::AttachmentOptions.new(options)
@@ -433,11 +413,7 @@ module Paperclip
     # Returns the attachment definitions defined by each call to
     # has_attached_file.
     def attachment_definitions
-      if respond_to?(:class_attribute)
-        self.attachment_definitions
-      else
-        read_inheritable_attribute(:attachment_definitions)
-      end
+      self.attachment_definitions
     end
   end
 
