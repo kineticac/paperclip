@@ -41,6 +41,7 @@ require 'paperclip/attachment'
 require 'paperclip/attachment_options'
 require 'paperclip/storage'
 require 'paperclip/callbacks'
+require 'paperclip/errors'
 require 'paperclip/missing_attachment_styles'
 require 'paperclip/railtie'
 require 'logger'
@@ -196,21 +197,6 @@ module Paperclip
     def reset_duplicate_clash_check!
       @names_url = nil
     end
-  end
-
-  class PaperclipError < StandardError #:nodoc:
-  end
-
-  class StorageMethodNotFound < PaperclipError
-  end
-
-  class CommandNotFoundError < PaperclipError
-  end
-
-  class NotIdentifiedByImageMagickError < PaperclipError #:nodoc:
-  end
-
-  class InfiniteInterpolationError < PaperclipError #:nodoc:
   end
 
   module ClassMethods
