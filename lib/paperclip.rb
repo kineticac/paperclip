@@ -28,7 +28,6 @@
 require 'erb'
 require 'digest'
 require 'tempfile'
-require 'active_support/concern'
 require 'paperclip/version'
 require 'paperclip/upfile'
 require 'paperclip/iostream'
@@ -41,6 +40,7 @@ require 'paperclip/attachment'
 require 'paperclip/attachment_options'
 require 'paperclip/storage'
 require 'paperclip/callbacks'
+require 'paperclip/glue'
 require 'paperclip/errors'
 require 'paperclip/missing_attachment_styles'
 require 'paperclip/railtie'
@@ -50,12 +50,6 @@ require 'cocaine'
 # The base module that gets included in ActiveRecord::Base. See the
 # documentation for Paperclip::ClassMethods for more useful information.
 module Paperclip
-  extend ActiveSupport::Concern
-
-  included do
-    include Paperclip::Callbacks
-    class_attribute :attachment_definitions
-  end
 
   class << self
     # Provides configurability to Paperclip. The options available are:

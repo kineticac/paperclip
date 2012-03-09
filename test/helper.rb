@@ -63,12 +63,12 @@ end
 require_everything_in_directory('support')
 
 def reset_class class_name
-  ActiveRecord::Base.send(:include, Paperclip)
+  ActiveRecord::Base.send(:include, Paperclip::Glue)
   Object.send(:remove_const, class_name) rescue nil
   klass = Object.const_set(class_name, Class.new(ActiveRecord::Base))
 
   klass.class_eval do
-    include Paperclip
+    include Paperclip::Glue
   end
 
   klass
@@ -97,12 +97,12 @@ def rebuild_model options = {}
 end
 
 def rebuild_class options = {}
-  ActiveRecord::Base.send(:include, Paperclip)
+  ActiveRecord::Base.send(:include, Paperclip::Glue)
   Object.send(:remove_const, "Dummy") rescue nil
   Object.const_set("Dummy", Class.new(ActiveRecord::Base))
   Paperclip.reset_duplicate_clash_check!
   Dummy.class_eval do
-    include Paperclip
+    include Paperclip::Glue
     has_attached_file :avatar, options
   end
   Dummy.reset_column_information

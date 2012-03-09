@@ -73,7 +73,7 @@ class PaperclipTest < Test::Unit::TestCase
   context "Attachments with clashing URLs should raise error" do
     setup do
       class Dummy2 < ActiveRecord::Base
-        include Paperclip
+        include Paperclip::Glue
       end
     end
 
