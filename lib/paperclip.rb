@@ -28,6 +28,7 @@
 require 'erb'
 require 'digest'
 require 'tempfile'
+require 'active_support/concern'
 require 'paperclip/version'
 require 'paperclip/upfile'
 require 'paperclip/iostream'
@@ -48,6 +49,12 @@ require 'cocaine'
 # The base module that gets included in ActiveRecord::Base. See the
 # documentation for Paperclip::ClassMethods for more useful information.
 module Paperclip
+  extend ActiveSupport::Concern
+
+  included do
+    include Paperclip::Callbacks
+    class_attribute :attachment_definitions
+  end
 
   class << self
     # Provides configurability to Paperclip. The options available are:
@@ -174,16 +181,6 @@ module Paperclip
         class_name.split('::').inject(Object) do |klass, partial_class_name|
           klass.const_defined?(partial_class_name) ? klass.const_get(partial_class_name, false) : klass.const_missing(partial_class_name)
         end
-      end
-    rescue ArgumentError => e
-      # Sadly, we need to capture ArgumentError here because Rails 2.3.x
-      # ActiveSupport dependency management will try to the constant inherited
-      # from Object, and fail miserably with "Object is not missing constant X" error
-      # https://github.com/rails/rails/blob/v2.3.12/activesupport/lib/active_support/dependencies.rb#L124
-      if e.message =~ /is not missing constant/
-        raise NameError, "uninitialized constant #{class_name}"
-      else
-        raise e
       end
     end
 
