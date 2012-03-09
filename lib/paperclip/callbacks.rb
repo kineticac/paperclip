@@ -1,5 +1,5 @@
 module Paperclip
-  module Callback
+  module Callbacks
     def self.included(base)
       base.extend(Defining)
       base.send(:include, Running)
